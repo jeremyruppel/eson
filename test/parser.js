@@ -85,4 +85,35 @@ describe('Parser', function(){
       parser.parse(data).should.eql(data);
     })
   })
+
+  describe('.format', function() {
+    it('should expose the JSON api by default', function() {
+      var parser = new Parser
+        , format = parser.format;
+
+      format.parse.should.equal(JSON.parse);
+      format.stringify.should.equal(JSON.stringify);
+    })
+
+    it('should not be the JSON global', function() {
+      var parser = new Parser
+        , format = parser.format;
+
+      format.should.not.equal(JSON);
+    })
+
+    it('should accept a custom format object', function() {
+      var parser = new Parser;
+
+      parser.format = {
+        parse: function(str) {
+          return JSON.parse(str.toUpperCase());
+        },
+        stringify: JSON.stringify
+      };
+
+      parser.parse('{ "foo": "bar" }')
+        .should.eql({ FOO: 'BAR' });
+    })
+  })
 })
